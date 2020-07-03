@@ -61,3 +61,7 @@ void NodosWidget::paintGL()
     ImGui::Render();
 }
 
+// cleanup routines
+void NodosWidget::shutdown() {
+    Application_Finalize();
+}

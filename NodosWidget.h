@@ -21,6 +21,8 @@ public:
         setFocusPolicy(Qt::StrongFocus);
     }
 
+    void shutdown();
+
 protected:
     void initializeGL() override;
     void paintGL() override;

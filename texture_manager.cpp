@@ -58,9 +58,10 @@ void texture_manager::DestroyTexture(ImTextureID texture)
     //resture our GLuint from our void*
     GLuint gid = (GLuint)texture;
 
-    // (TODO) actually delete the texture on the graphics card side.
+    //delete the texture on the graphics card side.
+    texture_owner[gid]->destroy();
 
-    // destroy the QImage
+    // destroy the QOpenGLTexture
     texture_owner.erase(gid);
 }
 
