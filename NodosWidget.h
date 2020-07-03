@@ -12,21 +12,14 @@
 
 class NodosWidget : public QOpenGLWidget, private QOpenGLExtraFunctions
 {
-    // CSR - Added this because the doc said it needed to be here or "strange things will happen".
     Q_OBJECT
 
 public:
-    // CSR - C++ means you don't inherit your base-class constructors for free.
-    // We have to re-declare the baseclass constructor, but that's good because we need
-    // to override the default focus policy, since it is set to "don't accept keyboard events".
+    // re-declare the baseclass constructor and override the default focus policy to pass keyboard events to the event handlers.
     NodosWidget(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags()) : QOpenGLWidget(parent, f)
     {
-        // CSR - This is needed to get keyboard event out to the event handlers
         setFocusPolicy(Qt::StrongFocus);
     }
-
-    // CSR - we need to store our own font atlas, as ImGui will not copy it when we Build() it.
-    std::unique_ptr<ImFontAtlas> nodos_font = std::unique_ptr<ImFontAtlas>(new ImFontAtlas());
 
 protected:
     void initializeGL() override;

@@ -21,7 +21,7 @@ void NodosWidget::initializeGL()
     config.PixelSnapH = false;
 
     ImFontAtlas* fa = ImGui::GetIO().Fonts;
-    fa->AddFontFromFileTTF("..\\imgui\\misc\\fonts\\Karla-Regular.ttf", 22.0f, &config, ranges);
+    fa->AddFontFromFileTTF("..\\qt-imgui-nodes\\Data\\selawk.ttf", 22.0f, &config, ranges);
     fa->Build();
 
     // Now that there's an opengl context, we can init the node editor
@@ -34,7 +34,7 @@ void NodosWidget::paintGL()
 {
     QtImGui::newFrame();
 
-    // Do render before ImGui UI is rendered (this wipes the previous frame)
+    // Clear the viewport
     glViewport(0, 0, width(), height());
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -48,6 +48,7 @@ void NodosWidget::paintGL()
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoSavedSettings |
         ImGuiWindowFlags_NoBringToFrontOnFocus);
 
+    // Tell imGui to assemble the blueprint drawlist
     Application_Frame();
 
     // DEV
@@ -55,7 +56,8 @@ void NodosWidget::paintGL()
 
     ImGui::End();
     ImGui::EndFrame();
-    // Have imGUI take the stuff we've specified elsewhere and render it.
+
+    // Tell imGui / QtimGui to paint the drawlist
     ImGui::Render();
 }
 

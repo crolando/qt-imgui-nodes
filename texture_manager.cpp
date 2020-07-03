@@ -2,12 +2,12 @@
 #include <texture_manager.h>
 #include <QDebug>
 
-// implement static members.
+// implement members
 std::unordered_map<GLuint, std::unique_ptr<QOpenGLTexture>> texture_manager::texture_owner;
 
-// The node editor needs us to implement Application_*Texture* functions.
-// These are called as functions but our implementation is in a method.
-// So, we need these little call-forwarder functions
+// imgui-node-editor needs us to implement non-member Application_*Texture*() functions,
+// and since we're in QT, we will use a subclass of QT's QOpenGLExtraFunctions class.
+// So, we need these call-forwarder functions
 void* Application_LoadTexture(char const* path)
 {
     return texture_manager::LoadTexture(path);
@@ -30,14 +30,12 @@ int Application_GetTextureHeight(void* id)
 
 void* texture_manager::LoadTexture(const char* path)
 {    
-    // The Application_Loadtexture demo calls should be prepended to include
-    // the inter-project access scheme we use.
+    // The Application_Loadtexture call should be prepended to adjust for this project's directory layout.
     const QString build_path = QString(path).prepend("../imgui-node-editor/");
     QImage qtex(build_path);
     if(qtex.isNull())
         exit(-1);
 
-    // Use QT's image loading and opengl texture creation shit.
     // Create a raw pointer so we construct the thing
     // which creates a OpenGL ID and uploads it to the graphics card.
     QOpenGLTexture* t_ptr = new QOpenGLTexture(QImage(qtex).mirrored());
