@@ -1,5 +1,5 @@
 #include <NodosWidget.h>
-#include <Application.h>
+#include <application.h>
 
 void NodosWidget::initializeGL()
 {

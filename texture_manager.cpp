@@ -1,4 +1,4 @@
-#include <Application.h>
+#include <application.h>
 #include <texture_manager.h>
 #include <QDebug>
 
@@ -31,10 +31,14 @@ int Application_GetTextureHeight(void* id)
 void* texture_manager::LoadTexture(const char* path)
 {    
     // The Application_Loadtexture call should be prepended to adjust for this project's directory layout.
-    const QString build_path = QString(path).prepend("../imgui-node-editor/");
+    const QString data_prefix("../imgui-node-editor/examples/blueprints-example/");
+    const QString build_path = QString(path).prepend(data_prefix);
+
     QImage qtex(build_path);
-    if(qtex.isNull())
+    if(qtex.isNull()) {
+        qDebug() << "texture_manager::LoadTexture Error: Texture was not loaded: " + build_path;
         exit(-1);
+    }
 
     // Create a raw pointer so we construct the thing
     // which creates a OpenGL ID and uploads it to the graphics card.
