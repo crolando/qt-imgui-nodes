@@ -14,4 +14,7 @@ in order to maximize re-use of the blueprints example.
 * You should have 3 subfolders
 * Install MSVS2017 and QT Creator (I use 4.9.1)
 * Setup QT Creator to have the QT kits that use VS (I use QT 5.13.0 MSVC2017 64-bit)
-* Open the qt_nodos.pro in QT Creator and build.
+* Open the qt_nodos.pro in QT Creator and build.  
+* If you get pathing errors during the build, edit the .pro file to make the addresses correct.
+* If the program suddenly exits or prints a debug message about texture loading,
+* check the texture pathing in texture_manager::LoadTexture()
