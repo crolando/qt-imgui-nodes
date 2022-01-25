@@ -59,6 +59,7 @@ void NodosWidget::paintGL()
 
     // Tell imGui / QtimGui to paint the drawlist
     ImGui::Render();
+    QtImGui::render();
 }
 
 // cleanup routines
