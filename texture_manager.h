@@ -15,7 +15,6 @@ public:
     static int GetTextureHeight(void*);
 
 private:
-    texture_manager();
     static std::unordered_map<GLuint, std::unique_ptr<QOpenGLTexture>> texture_owner;
 };
 

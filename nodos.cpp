@@ -1,7 +1,7 @@
 // This source file must have credited to thedmd on github.  This is a heavily modified version of this file, retrieved 12/27/2020:
 // https://github.com/thedmd/imgui-node-editor/blob/master/examples/blueprints-example/blueprints-example.cpp
-#include <application.h>
 
+#include <NodosWidget.h>
 #include "utilities/widgets.h"
 
 #include <imgui_node_editor.h>
@@ -270,14 +270,7 @@ bool isNodeAncestor(Node* Ancestor, Node* Decendent) {
     } // Done searching pins
 }
 
-
-
-const char* Application_GetName()
-{
-    return "Blueprints";
-}
-
-void Application_Initialize()
+void NodosWidget::NodeWidget_Initialize()
 {
 
     // NODOS DEV ===================================================
@@ -399,9 +392,9 @@ void Application_Initialize()
     //
     //s_Links.push_back(Link(GetNextLinkId(), s_Nodes[14].Outputs[0].ID, s_Nodes[15].Inputs[0].ID));
 
-    s_HeaderBackground = Application_LoadTexture("Data/BlueprintBackground.png");
-    s_SaveIcon         = Application_LoadTexture("Data/ic_save_white_24dp.png");
-    s_RestoreIcon      = Application_LoadTexture("Data/ic_restore_white_24dp.png");
+    s_HeaderBackground = textures.LoadTexture("Data/BlueprintBackground.png");
+    s_SaveIcon         = textures.LoadTexture("Data/ic_save_white_24dp.png");
+    s_RestoreIcon      = textures.LoadTexture("Data/ic_restore_white_24dp.png");
 
 
     // Extremely bad deserialization system
@@ -483,20 +476,14 @@ void Application_Initialize()
     //auto& io = ImGui::GetIO();
 }
 
-void Application_Finalize()
+void NodosWidget::NodeWidget_Finalize()
 {
-    auto releaseTexture = [](ImTextureID& id)
-    {
-        if (id)
-        {
-            Application_DestroyTexture(id);
-            id = nullptr;
-        }
-    };
-
-    releaseTexture(s_RestoreIcon);
-    releaseTexture(s_SaveIcon);
-    releaseTexture(s_HeaderBackground);
+    textures.DestroyTexture(s_RestoreIcon);
+    textures.DestroyTexture(s_SaveIcon);
+    textures.DestroyTexture(s_HeaderBackground);
+    s_RestoreIcon = nullptr;
+    s_SaveIcon = nullptr;
+    s_HeaderBackground = nullptr;
 
     // Extremely bad serilzation system    
     std::ofstream out("nodos_project.txt");
@@ -646,180 +633,7 @@ void ShowStyleEditor(bool* show = nullptr)
     ImGui::End();
 }
 
-void ShowLeftPane(float paneWidth)
-{
-    auto& io = ImGui::GetIO();
-
-    ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
-
-    paneWidth = ImGui::GetContentRegionAvailWidth();
-
-    static bool showStyleEditor = false;
-    ImGui::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
-    ImGui::Spring(0.0f, 0.0f);
-    if (ImGui::Button("Zoom to Content"))
-        ed::NavigateToContent();
-    ImGui::Spring(0.0f);
-    if (ImGui::Button("Show Flow"))
-    {
-        for (auto& link : s_Links)
-            ed::Flow(link.ID);
-    }
-    ImGui::Spring();
-    if (ImGui::Button("Edit Style"))
-        showStyleEditor = true;
-    ImGui::EndHorizontal();
-
-    if (showStyleEditor)
-        ShowStyleEditor(&showStyleEditor);
-
-    std::vector<ed::NodeId> selectedNodes;
-    std::vector<ed::LinkId> selectedLinks;
-    selectedNodes.resize(ed::GetSelectedObjectCount());
-    selectedLinks.resize(ed::GetSelectedObjectCount());
-
-    int nodeCount = ed::GetSelectedNodes(selectedNodes.data(), static_cast<int>(selectedNodes.size()));
-    int linkCount = ed::GetSelectedLinks(selectedLinks.data(), static_cast<int>(selectedLinks.size()));
-
-    selectedNodes.resize(nodeCount);
-    selectedLinks.resize(linkCount);
-
-    int saveIconWidth     = Application_GetTextureWidth(s_SaveIcon);
-    int saveIconHeight    = Application_GetTextureWidth(s_SaveIcon);
-    int restoreIconWidth  = Application_GetTextureWidth(s_RestoreIcon);
-    int restoreIconHeight = Application_GetTextureWidth(s_RestoreIcon);
-
-    ImGui::GetWindowDrawList()->AddRectFilled(
-        ImGui::GetCursorScreenPos(),
-        ImGui::GetCursorScreenPos() + ImVec2(paneWidth, ImGui::GetTextLineHeight()),
-        ImColor(ImGui::GetStyle().Colors[ImGuiCol_HeaderActive]), ImGui::GetTextLineHeight() * 0.25f);
-    ImGui::Spacing(); ImGui::SameLine();
-    ImGui::TextUnformatted("Nodes");
-    ImGui::Indent();
-    for (auto& node : s_Nodes)
-    {
-        ImGui::PushID(node.ID.AsPointer());
-        auto start = ImGui::GetCursorScreenPos();
-
-        if (const auto progress = GetTouchProgress(node.ID))
-        {
-            ImGui::GetWindowDrawList()->AddLine(
-                start + ImVec2(-8, 0),
-                start + ImVec2(-8, ImGui::GetTextLineHeight()),
-                IM_COL32(255, 0, 0, 255 - (int)(255 * progress)), 4.0f);
-        }
-
-        bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node.ID) != selectedNodes.end();
-        if (ImGui::Selectable((node.Name + "##" + std::to_string(reinterpret_cast<uintptr_t>(node.ID.AsPointer()))).c_str(), &isSelected))
-        {
-            if (io.KeyCtrl)
-            {
-                if (isSelected)
-                    ed::SelectNode(node.ID, true);
-                else
-                    ed::DeselectNode(node.ID);
-            }
-            else
-                ed::SelectNode(node.ID, false);
-
-            ed::NavigateToSelection();
-        }
-        if (ImGui::IsItemHovered() && !node.State.empty())
-            ImGui::SetTooltip("State: %s", node.State.c_str());
-
-        auto id = std::string("(") + std::to_string(reinterpret_cast<uintptr_t>(node.ID.AsPointer())) + ")";
-        auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
-        auto iconPanelPos = start + ImVec2(
-            paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - saveIconWidth - restoreIconWidth - ImGui::GetStyle().ItemInnerSpacing.x * 1,
-            (ImGui::GetTextLineHeight() - saveIconHeight) / 2);
-        ImGui::GetWindowDrawList()->AddText(
-            ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
-            IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
-
-        auto drawList = ImGui::GetWindowDrawList();
-        ImGui::SetCursorScreenPos(iconPanelPos);
-        ImGui::SetItemAllowOverlap();
-        if (node.SavedState.empty())
-        {
-            if (ImGui::InvisibleButton("save", ImVec2((float)saveIconWidth, (float)saveIconHeight)))
-                node.SavedState = node.State;
-
-            if (ImGui::IsItemActive())
-                drawList->AddImage(s_SaveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 96));
-            else if (ImGui::IsItemHovered())
-                drawList->AddImage(s_SaveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 255));
-            else
-                drawList->AddImage(s_SaveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 160));
-        }
-        else
-        {
-            ImGui::Dummy(ImVec2((float)saveIconWidth, (float)saveIconHeight));
-            drawList->AddImage(s_SaveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 32));
-        }
-
-        ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-        ImGui::SetItemAllowOverlap();
-        if (!node.SavedState.empty())
-        {
-            if (ImGui::InvisibleButton("restore", ImVec2((float)restoreIconWidth, (float)restoreIconHeight)))
-            {
-                node.State = node.SavedState;
-                ed::RestoreNodeState(node.ID);
-                node.SavedState.clear();
-            }
-
-            if (ImGui::IsItemActive())
-                drawList->AddImage(s_RestoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 96));
-            else if (ImGui::IsItemHovered())
-                drawList->AddImage(s_RestoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 255));
-            else
-                drawList->AddImage(s_RestoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 160));
-        }
-        else
-        {
-            ImGui::Dummy(ImVec2((float)restoreIconWidth, (float)restoreIconHeight));
-            drawList->AddImage(s_RestoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 32));
-        }
-
-        ImGui::SameLine(0, 0);
-        ImGui::SetItemAllowOverlap();
-        ImGui::Dummy(ImVec2(0, (float)restoreIconHeight));
-
-        ImGui::PopID();
-    }
-    ImGui::Unindent();
-
-    static int changeCount = 0;
-
-    ImGui::GetWindowDrawList()->AddRectFilled(
-        ImGui::GetCursorScreenPos(),
-        ImGui::GetCursorScreenPos() + ImVec2(paneWidth, ImGui::GetTextLineHeight()),
-        ImColor(ImGui::GetStyle().Colors[ImGuiCol_HeaderActive]), ImGui::GetTextLineHeight() * 0.25f);
-    ImGui::Spacing(); ImGui::SameLine();
-    ImGui::TextUnformatted("Selection");
-
-    ImGui::BeginHorizontal("Selection Stats", ImVec2(paneWidth, 0));
-    ImGui::Text("Changed %d time%s", changeCount, changeCount > 1 ? "s" : "");
-    ImGui::Spring();
-    if (ImGui::Button("Deselect All"))
-        ed::ClearSelection();
-    ImGui::EndHorizontal();
-    ImGui::Indent();
-    for (int i = 0; i < nodeCount; ++i) ImGui::Text("Node (%p)", selectedNodes[i].AsPointer());
-    for (int i = 0; i < linkCount; ++i) ImGui::Text("Link (%p)", selectedLinks[i].AsPointer());
-    ImGui::Unindent();
-
-    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
-        for (auto& link : s_Links)
-            ed::Flow(link.ID);
-
-    if (ed::HasSelectionChanged())
-        ++changeCount;
-
-    ImGui::EndChild();
-}
-
-void Application_Frame()
+void NodosWidget::NodeWidget_Frame()
 {
     UpdateTouch();
 
@@ -863,7 +677,7 @@ void Application_Frame()
     {
         auto cursorTopLeft = ImGui::GetCursorScreenPos();
 
-        util::BlueprintNodeBuilder builder(s_HeaderBackground, Application_GetTextureWidth(s_HeaderBackground), Application_GetTextureHeight(s_HeaderBackground));
+        util::BlueprintNodeBuilder builder(s_HeaderBackground, textures.GetTextureWidth(s_HeaderBackground), textures.GetTextureHeight(s_HeaderBackground));
 
         // ====================================================================================================================================
         // NODOS DEV - draw nodes of type Blueprint and Simple

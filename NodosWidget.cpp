@@ -1,5 +1,4 @@
 #include <NodosWidget.h>
-#include <application.h>
 
 void NodosWidget::initializeGL()
 {
@@ -25,8 +24,7 @@ void NodosWidget::initializeGL()
     fa->Build();
 
     // Now that there's an opengl context, we can init the node editor
-    Application_Initialize();
-
+    NodeWidget_Initialize();
 
 }
 
@@ -49,7 +47,7 @@ void NodosWidget::paintGL()
         ImGuiWindowFlags_NoBringToFrontOnFocus);
 
     // Tell imGui to assemble the blueprint drawlist
-    Application_Frame();
+    NodeWidget_Frame();
 
     // DEV
     //ImGui::ShowStyleEditor();
@@ -64,5 +62,5 @@ void NodosWidget::paintGL()
 
 // cleanup routines
 void NodosWidget::shutdown() {
-    Application_Finalize();
+    NodeWidget_Finalize();
 }

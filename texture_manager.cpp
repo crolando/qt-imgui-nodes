@@ -1,4 +1,3 @@
-#include <application.h>
 #include <texture_manager.h>
 #include <QDebug>
 

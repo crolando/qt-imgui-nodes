@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <imgui_node_editor.h>
 #include <memory>
+#include <texture_manager.h>
 
 class NodosWidget : public QOpenGLWidget, private QOpenGLExtraFunctions
 {
@@ -30,4 +31,8 @@ protected:
 
 private:
     ImVec4 clear_color = ImColor(114, 144, 154);
+    texture_manager textures;
+    void NodeWidget_Initialize();
+    void NodeWidget_Finalize();
+    void NodeWidget_Frame();
 };
