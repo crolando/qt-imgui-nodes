@@ -28,8 +28,8 @@ SOURCES += \
     ../imgui-node-editor/external/imgui/imgui_demo.cpp \
     ../imgui-node-editor/external/imgui/imgui_draw.cpp \
     ../imgui-node-editor/external/imgui/imgui_widgets.cpp \
-    ../qtimgui/ImGuiRenderer.cpp \
-    ../qtimgui/QtImGui.cpp \
+    ../qtimgui/src/ImGuiRenderer.cpp \
+    ../qtimgui/src/QtImGui.cpp \
     NodosWidget.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -50,8 +50,8 @@ HEADERS += \
     ../imgui-node-editor/NodeEditor/Source/imgui_node_editor_internal.h \
     ../imgui-node-editor/NodeEditor/Source/imgui_node_editor_internal.inl \
     ../imgui-node-editor/external/imgui/imgui.h \
-    ../qtimgui/ImGuiRenderer.h \
-    ../qtimgui/QtImGui.h \
+    ../qtimgui/src/ImGuiRenderer.h \
+    ../qtimgui/src/QtImGui.h \
     texture_manager.h \
     NodosWidget.h \
     mainwindow.h
@@ -62,7 +62,7 @@ FORMS += \
 INCLUDEPATH += \
     ../imgui-node-editor \
     ../imgui-node-editor/external/imgui \
-    ../qtimgui \
+    ../qtimgui/src \
     ../imgui-node-editor/examples/application/include \
     ../imgui-node-editor/examples/Common/Application/Include \
     ../imgui-node-editor/examples/blueprints-example/utilities
