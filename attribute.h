@@ -1,9 +1,23 @@
 #ifndef ATTRIBUTE_H
 #define ATTRIBUTE_H
 
+/* Attribute.h
+ * an "attribute" is a key-value pair, where the key is always a string
+ * and the value can be a string, float or integer
+ *
+ * includes the "attribute table" class, which you would put on an object.
+ * This lets you set and get attributes, and also can
+ * serialize and deserialze the whole table, to file, for example.
+ *
+ */
+
+
 #include <string>
 #include <sstream>
 #include <map>
+
+
+
 
 typedef std::string attr_name;
 typedef double      attr_fnumber;

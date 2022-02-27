@@ -670,6 +670,8 @@ void NodosWidget::NodeWidget_Frame()
 
     //ImGui::SameLine(0.0f, 12.0f);
 
+
+
     // ====================================================================================================================================
     // NODOS DEV - Immediate Mode node drawing.
     // ====================================================================================================================================
@@ -1544,7 +1546,55 @@ void NodosWidget::NodeWidget_Frame()
     cubic_bezier_subdivide(acceptPoint, c);
 */
 
+
+
+
     ed::End();
+
+    // ====================================================================================================================================
+    // NODOS DEV - outside-of-begin-end field.
+    // ====================================================================================================================================
+
+    // retrive selections using api
+    if (ax::NodeEditor::HasSelectionChanged())
+    {
+        int count =  ax::NodeEditor::GetSelectedObjectCount();
+
+        // Get node selections
+        ax::NodeEditor::NodeId* node_buffer = nullptr;
+        int sel_nodes = ax::NodeEditor::GetSelectedNodes(nullptr,0);
+        if (sel_nodes > 0) {
+            node_buffer = new ax::NodeEditor::NodeId[sel_nodes];
+            ax::NodeEditor::GetSelectedNodes(node_buffer,sel_nodes);
+            for (int i = 0; i < sel_nodes; i++) {
+                Node* Node = FindNode(node_buffer[i]);
+                qDebug() << "Selected Node ID: " << Node->ID.Get() ;
+            }
+        }
+
+
+        // Get link selections
+        ax::NodeEditor::LinkId* link_buffer = nullptr;
+        int sel_links = ax::NodeEditor::GetSelectedLinks(nullptr,0);
+        if (sel_links > 0) {
+            link_buffer = new ax::NodeEditor::LinkId[sel_links];
+            ax::NodeEditor::GetSelectedLinks(link_buffer,sel_links);
+            for (int i = 0; i < sel_links; i++) {
+                Link* Link = FindLink(link_buffer[i]);
+                qDebug() << "Selected Link ID: " << Link->ID.Get() ;
+            }
+        }
+        qDebug() << "--------------- end of list -------------";
+
+        // int sel_links = ax::NodeEditor::GetSelectedLinks(LinkId* links, int size);
+        //bool IsNodeSelected(NodeId nodeId);
+        //bool IsLinkSelected(LinkId linkId);
+
+
+        delete[] node_buffer;
+        delete[] link_buffer;
+
+    }
 
 
     //ImGui::ShowTestWindow();
