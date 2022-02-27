@@ -1,4 +1,5 @@
 #include <NodosWidget.h>
+#include <node_turnkey_api.h>
 
 void NodosWidget::initializeGL()
 {
