@@ -25,7 +25,7 @@ void NodosWidget::initializeGL()
     fa->Build();
 
     // Now that there's an opengl context, we can init the node editor
-    NodeWidget_Initialize();
+    session.Initialize();
 
 }
 
@@ -48,7 +48,7 @@ void NodosWidget::paintGL()
         ImGuiWindowFlags_NoBringToFrontOnFocus);
 
     // Tell imGui to assemble the blueprint drawlist
-    NodeWidget_Frame();
+    session.Frame();
 
     // DEV
     //ImGui::ShowStyleEditor();
@@ -63,5 +63,5 @@ void NodosWidget::paintGL()
 
 // cleanup routines
 void NodosWidget::shutdown() {
-    NodeWidget_Finalize();
+    session.Finalize();
 }
