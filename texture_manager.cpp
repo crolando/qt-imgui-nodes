@@ -1,5 +1,4 @@
 #include <texture_manager.h>
-#include <QDebug>
 
 // implement members
 std::unordered_map<GLuint, std::unique_ptr<QOpenGLTexture>> texture_manager::texture_owner;
@@ -35,7 +34,6 @@ void* texture_manager::LoadTexture(const char* path)
 
     QImage qtex(build_path);
     if(qtex.isNull()) {
-        qDebug() << "texture_manager::LoadTexture Error: Texture was not loaded: " + build_path;
         exit(-1);
     }
 

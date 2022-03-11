@@ -6,7 +6,6 @@
 #include <QOpenGLWidget>
 #include <QOpenGLExtraFunctions>
 #include <QObject>
-#include <QDebug>
 #include <imgui_node_editor.h>
 #include <memory>
 #include <texture_manager.h>
