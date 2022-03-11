@@ -1,5 +1,6 @@
 #include <NodosWidget.h>
 #include <node_turnkey_api.h>
+#include <node_defs/import_animal.h>
 
 void NodosWidget::initializeGL()
 {
@@ -25,7 +26,10 @@ void NodosWidget::initializeGL()
     fa->Build();
 
     // Now that there's an opengl context, we can init the node editor
-    session.Initialize();
+    turnkey::api::SetContext(turnkey::api::CreateContext());
+    turnkey::api::RegisterNewNode(node_defs::import_animal::ConstructDefinition());
+    turnkey::api::Initialize();
+
 
 }
 
@@ -48,7 +52,7 @@ void NodosWidget::paintGL()
         ImGuiWindowFlags_NoBringToFrontOnFocus);
 
     // Tell imGui to assemble the blueprint drawlist
-    session.Frame();
+    turnkey::api::Frame();
 
     // DEV
     //ImGui::ShowStyleEditor();
@@ -63,5 +67,5 @@ void NodosWidget::paintGL()
 
 // cleanup routines
 void NodosWidget::shutdown() {
-    session.Finalize();
+    turnkey::api::Finalize();
 }

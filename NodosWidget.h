@@ -33,5 +33,4 @@ protected:
 private:
     ImVec4 clear_color = ImColor(114, 144, 154);
     texture_manager textures;
-    turnkey::api::nodos_session_data session;
 };
