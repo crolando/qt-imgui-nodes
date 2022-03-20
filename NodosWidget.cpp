@@ -27,10 +27,12 @@ void NodosWidget::initializeGL()
 
     // Now that there's an opengl context, we can init the node editor
     turnkey::api::SetContext(turnkey::api::CreateContext());
-    turnkey::api::RegisterNewNode(node_defs::import_animal::ConstructDefinition());
     turnkey::api::Initialize();
+    turnkey::api::RegisterNewNode(node_defs::import_animal::ConstructDefinition());
 
 
+    void* buffer = nullptr;
+    turnkey::api::LoadNodesAndLinksFromBuffer(0,buffer);
 }
 
 void NodosWidget::paintGL()
@@ -67,5 +69,7 @@ void NodosWidget::paintGL()
 
 // cleanup routines
 void NodosWidget::shutdown() {
+    void* buffer = nullptr;
+    size_t size = turnkey::api::SaveNodesAndLinksToBuffer(buffer);
     turnkey::api::Finalize();
 }
