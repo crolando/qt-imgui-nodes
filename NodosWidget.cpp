@@ -73,14 +73,12 @@ void NodosWidget::shutdown() {
     // Save the project file.
     std::ofstream out("nodos_project.txt");
 
-    char* cbuffer = nullptr;
-    size_t size = turnkey::api::SaveNodesAndLinksToBuffer(&cbuffer);
 
-
+    size_t size;
+    char* cbuffer  = turnkey::api::SaveNodesAndLinksToBuffer(&size);
     std::string sbuffer(cbuffer,size);
-    out << sbuffer;
-
     delete cbuffer;
 
+    out << sbuffer;
     turnkey::api::Finalize();
 }
