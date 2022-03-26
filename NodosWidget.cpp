@@ -69,7 +69,18 @@ void NodosWidget::paintGL()
 
 // cleanup routines
 void NodosWidget::shutdown() {
-    void* buffer = nullptr;
-    size_t size = turnkey::api::SaveNodesAndLinksToBuffer(buffer);
+    std::string b;
+    // Save the project file.
+    std::ofstream out("nodos_project.txt");
+
+    char* cbuffer = nullptr;
+    size_t size = turnkey::api::SaveNodesAndLinksToBuffer(&cbuffer);
+
+
+    std::string sbuffer(cbuffer,size);
+    out << sbuffer;
+
+    delete cbuffer;
+
     turnkey::api::Finalize();
 }
