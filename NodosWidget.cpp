@@ -1,6 +1,7 @@
 #include <NodosWidget.h>
 #include <node_turnkey_api.h>
 #include <node_defs/import_animal.h>
+#include <node_defs/blueprint_demo.h>
 
 void NodosWidget::initializeGL()
 {
@@ -29,6 +30,13 @@ void NodosWidget::initializeGL()
     turnkey::api::SetContext(turnkey::api::CreateContext());
     turnkey::api::Initialize();
     turnkey::api::RegisterNewNode(node_defs::import_animal::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::InputActionFire::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::OutputAction::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::Branch::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::DoN::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::SetTimer::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::SingleLineTraceByChannel::ConstructDefinition());
+    turnkey::api::RegisterNewNode(node_defs::blueprint_demo::PrintString::ConstructDefinition());
 
     // Pattern for restoring our project files
     std::ifstream inf("nodos_project.txt");
