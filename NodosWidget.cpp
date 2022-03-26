@@ -30,9 +30,13 @@ void NodosWidget::initializeGL()
     turnkey::api::Initialize();
     turnkey::api::RegisterNewNode(node_defs::import_animal::ConstructDefinition());
 
-
-    void* buffer = nullptr;
-    turnkey::api::LoadNodesAndLinksFromBuffer(0,buffer);
+    // Pattern for restoring our project files
+    std::ifstream inf("nodos_project.txt");
+    std::stringstream ssbuf;
+    ssbuf << inf.rdbuf();
+    std::string sbuf = ssbuf.str();
+    size_t size = sbuf.size();
+    turnkey::api::LoadNodesAndLinksFromBuffer(size,sbuf.c_str());
 }
 
 void NodosWidget::paintGL()
